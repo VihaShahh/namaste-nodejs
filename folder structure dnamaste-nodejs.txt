@@ -1,0 +1,17 @@
+folder structure d:/namaste-nodejs
+
+open in namaste-nodejs in terminal
+
+git init
+
+
+make a GitHub repo namaste-nodejs
+
+in terminal:
+
+git add .
+git commit -m "your commit message" 
+git branch -M main
+git remote add origin https://github.com/VihaShahh/namaste-nodejs.git
+git push -u origin main
+
