@@ -1,36 +1,64 @@
-//using common js way
+import express from "express";
 
-// const obj = require("./sum") // ./ means current directory 
-// //or
-// const { x, sum} = require ("./sum.js") // aavu pan chale destructuring
-// let a = 10
-// let b = 20
-// // obj.sum(a,b)
-// sum(a,b)
+const app = express();
 
-// // console.log(obj.x, obj.sum(a,b))
-// console.log(x, sum(a,b))
+// ---------------------
+// USER AUTH MIDDLEWARE
+// ---------------------
+const userAuth = (req, res, next) => {
+  console.log("User auth is being checked");
 
-//=================================
-//using es6 way
-import data from "./data.json" assert{ type: "json"}
-import { x, sum}  from "./calculate/sum.js"
-import { calculateMultiply } from  "./calculate/multiply.js"
+  const token = req.headers.token;   // User token should be in header
+  const isAuthorized = token == "user-abc";
 
+  if (!isAuthorized) {
+    return res.status(401).send("Unauthorized user request");
+  }
 
-let a = 10
-let b = 20
+  next();
+};
 
-calculateMultiply(a,b)
-sum(a,b)
+// ---------------------
+// ADMIN AUTH MIDDLEWARE
+// ---------------------
+const adminAuth = (req, res, next) => {
+  console.log("Admin auth is being checked");
 
-console.log(x, sum(a,b), calculateMultiply(a,b))
-console.log(data)
-console.log(data.name, data.age)
+  const token = req.headers.token;   // Admin token should be in header
+  const isAuthorized = token === "admin-xyz";
 
-// In ES Modules, the word assert is part of import assertions.
-// It tells Node.js extra information (metadata) about the file being imported — for example, what type of file it is.
-// Without this assertion, Node.js doesn’t know what to do with .json (since by default, it only understands .js, .mjs, and .cjs).
-// Causes:
+  if (!isAuthorized) {
+    return res.status(401).send("Unauthorized admin request");
+  }
 
-// ERR_IMPORT_ASSERTION_TYPE_MISSING
+  next();
+};
+
+// ---------------------
+// USER ROUTES
+// ---------------------
+app.get("/user/profile", userAuth, (req, res) => {
+  res.send("User profile data");
+});
+
+app.get("/user/orders", userAuth, (req, res) => {
+  res.send("User order history");
+});
+
+// ---------------------
+// ADMIN ROUTES
+// ---------------------
+app.get("/admin/getAllData", adminAuth, (req, res) => {
+  res.send("All admin data");
+});
+
+app.get("/admin/deleteUser", adminAuth, (req, res) => {
+  res.send("Admin deleted a user");
+});
+
+// ---------------------
+// START SERVER
+// ---------------------
+app.listen(3009, () => {
+  console.log("Server running on port 3009");
+});
